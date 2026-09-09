@@ -1,3 +1,19 @@
+# внутреннее — в публичный репозиторий не уезжает
 NOTES.md
 deploy.sh
+.pass-note
+.admin-pass
 .DS_Store
+data.js.prev
+published.json
+
+# панель и её бэкенд: в api.php лежит хэш пароля сайта
+panel.html
+panel.css
+panel-core.js
+panel-schema.js
+publish.js
+gate.js
+api.php
+data.php
+check.php
