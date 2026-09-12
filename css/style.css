@@ -494,7 +494,104 @@ a { color: inherit; }
   margin-bottom: 38px;
 }
 .section__title { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.section__sub { margin-top: 10px; font-size: 15px; color: var(--text-2); }
 .section__note { font-size: 14px; color: var(--muted); }
+
+/* --------------------------------------------------------------------------
+   Кнопки разделов каталога
+
+   Состояние держат рамка и метка, а не заливка: --surface-2 к --surface-1
+   это 1.11:1, глазом такую разницу не поймать. Белая рамка закреплена
+   за «нажато», наведение красит рамку в --text-2 — иначе наведённая
+   кнопка выглядит выбранной и на странице два активных раздела.
+   -------------------------------------------------------------------------- */
+
+.chip-row { margin-bottom: 26px; }
+.chip-row__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.chip-row__group {
+  display: flex;
+  flex-wrap: wrap;               /* на 320 px переносим, а не прокручиваем */
+  gap: 14px;                     /* кольцо фокуса 3+3 px не достаёт до соседа */
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.chip[aria-pressed="false"]:hover {
+  background: rgba(255, 255, 255, .06);
+  border-color: var(--text-2);
+  color: var(--text);
+}
+.chip[aria-pressed="true"] {
+  background: var(--surface-2);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+/* Метка состояния — форма, а не цвет: кольцо превращается в точку.
+   Галочка намекала бы, что разделов можно выбрать несколько. */
+.chip__mark {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.chip[aria-pressed="true"] .chip__mark { border-width: 5px; }
+
+/* Число видимое, а не для скринридера: так его читают и глазами,
+   и оно же остаётся частью имени кнопки для голосового управления. */
+.chip__n {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.chip[aria-pressed="true"] .chip__n { color: var(--text-2); }
+
+@media (forced-colors: active) {
+  /* ОС перекрашивает background-color и border-color — без системных
+     ключевых слов оба состояния стали бы одинаковыми. */
+  .chip { background-color: ButtonFace; border-color: ButtonText; color: ButtonText; }
+  .chip[aria-pressed="true"] {
+    background-color: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
+  .chip[aria-pressed="false"]:hover { background-color: ButtonFace; }
+  /* На нажатой кнопке заливка тоже Highlight — кольцу фокуса даём CanvasText. */
+  .chip[aria-pressed="true"]:focus-visible { outline-color: CanvasText; }
+}
+
+/* Строка «показано столько-то»: она же живая область для скринридера.
+   Прятать её через display:none нельзя — скрытую область диктор
+   не объявляет. Место держим заранее, чтобы страница не прыгала. */
+.offers-status {
+  min-height: 1.5em;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: var(--text-2);
+}
 
 /* Карточки предложений */
 .cards {
@@ -576,7 +673,13 @@ a { color: inherit; }
 .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
 .table-scroll:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
-.table { width: 100%; min-width: 900px; border-collapse: collapse; }
+/* Ширину считаем от числа колонок (--cols ставит js/catalog.js): жёсткие
+   900 px заставляли прокручивать вбок даже раздел из трёх колонок. */
+.table {
+  width: 100%;
+  min-width: calc(250px + (var(--cols, 6) - 1) * 150px);
+  border-collapse: collapse;
+}
 .table th, .table td { text-align: left; padding: 15px 18px; vertical-align: middle; }
 .table thead th {
   font-family: var(--mono);
@@ -586,7 +689,10 @@ a { color: inherit; }
   text-transform: uppercase;
   color: var(--muted);
   border-bottom: 2px solid var(--line-strong);
-  white-space: nowrap;
+  /* Переносим, а не растягиваем: «Расчётно-кассовое обслуживание» в одну
+     строку раздувало таблицу вдвое при увеличении до 200 %. */
+  white-space: normal;
+  hyphens: auto;
 }
 .table tbody th {
   font-size: 15px;
@@ -717,7 +823,7 @@ a { color: inherit; }
 
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
-  .btn, .card, .nav__list a, .faq__btn, .to-top, .motion-toggle, .table tbody tr {
+  .btn, .card, .nav__list a, .faq__btn, .to-top, .motion-toggle, .chip, .table tbody tr {
     transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
   }
   .card:hover { transform: translateY(-2px); }

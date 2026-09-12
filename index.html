@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Дебетовые карты ВТБ, ОТП Банка и ПСБ — finance-time</title>
-<meta name="description" content="Три дебетовые карты платёжной системы «Мир»: бесплатное обслуживание, доставка курьером, заявка онлайн за пять минут. Сравнение условий и переход на официальный сайт банка.">
+<title>Финансовые продукты банков и МФО: карты, займы, счета — finance-time</title>
+<meta name="description" content="Подборка финансовых продуктов в одном месте: дебетовые и кредитные карты, займы в МФО, расчётно-кассовое обслуживание. Сравнение условий и переход на официальный сайт партнёра.">
 <meta name="theme-color" content="#080b11">
 <meta name="format-detection" content="telephone=no">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:site_name" content="finance-time">
-<meta property="og:title" content="Дебетовые карты ВТБ, ОТП Банка и ПСБ — finance-time">
-<meta property="og:description" content="Карты «Мир» трёх банков: обслуживание 0 ₽, бесплатная доставка, заявка онлайн за пять минут.">
+<meta property="og:title" content="Финансовые продукты банков и МФО: карты, займы, счета — finance-time">
+<meta property="og:description" content="Карты, займы и счета от банков и МФО: условия рядом, заявка на официальном сайте партнёра.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="fonts/fonts.css">
-<link rel="stylesheet" href="css/style.css?v=20260909194636">
+<link rel="stylesheet" href="css/style.css?v=20260912165940">
 <noscript>
   <!-- Без JS ответы в блоке вопросов раскрыты: иначе их нельзя было бы прочитать. -->
   <style>.faq__panel[hidden] { display: block !important; } .faq__sign { display: none; }</style>
@@ -25,6 +25,11 @@
 <!-- ==========================================================================
      ЧТО ЗДЕСЬ МЕНЯТЬ (памятка для правок)
 
+     ГЛАВНОЕ: предложения, разделы и тексты первого экрана живут в data.js
+     и правятся через panel.html. Разметка ниже — запасной вариант на случай,
+     если data.js не загрузится; правки в ней на сайт не влияют, пока
+     каталог читается.
+
      1. Партнёрские ссылки банков — искать по слову «clck.ru» ниже.
         Их четыре пары: карточка предложения и строка в таблице сравнения.
      2. Условия карт (обслуживание, кэшбэк, доставка) — блоки .card__specs
@@ -32,6 +37,10 @@
         точные цифры подставим, когда банк подтвердит оффер.
      3. Контакты в подвале — закомментированы, раскомментировать и заполнить.
      4. Дата «обновлено» — в верхней строке и в блоке предложений.
+     5. id-шники offers-title, compare-title, cards-cap и board-title держат
+        на себе aria-labelledby соседних блоков: если удалить узел с таким id,
+        область пропадёт из списка ориентиров страницы. Скрипт меняет у них
+        только текст.
      ========================================================================== -->
 
 <a class="skip-link" href="#main">Перейти к основному содержанию</a>
@@ -39,7 +48,7 @@
 <header class="header" id="top" tabindex="-1">
   <div class="topline">
     <div class="wrap topline__inner">
-      <p class="topline__text">Подбор дебетовых карт&ensp;·&ensp;платёжная система «Мир»&ensp;·&ensp;3 банка-партнёра</p>
+      <p class="topline__text">Карты, займы и счета&ensp;·&ensp;предложения банков и МФО&ensp;·&ensp;заявка онлайн</p>
       <p class="topline__date"><span aria-hidden="true">●</span> обновлено 09.09.2026</p>
     </div>
   </div>
@@ -60,14 +69,14 @@
 
     <nav class="nav" aria-label="Разделы страницы">
       <ul class="nav__list">
-        <li><a href="#offers">Карты</a></li>
+        <li><a href="#offers">Предложения</a></li>
         <li><a href="#compare">Сравнение</a></li>
         <li><a href="#how">Как оформить</a></li>
         <li><a href="#faq">Вопросы</a></li>
       </ul>
     </nav>
 
-    <a class="btn btn--primary btn--sm header__cta" href="#offers">Смотреть карты</a>
+    <a class="btn btn--primary btn--sm header__cta" href="#offers">Смотреть предложения</a>
   </div>
 </header>
 
@@ -85,27 +94,30 @@
     <div class="wrap hero__inner">
 
       <div class="hero__content">
-        <p class="eyebrow">01 <span aria-hidden="true">—</span> Дебетовые карты «Мир»</p>
-        <h1 class="hero__title" id="hero-title">Дебетовая карта без визита в банк&nbsp;— заявка за пять минут</h1>
+        <p class="eyebrow"><span aria-hidden="true">01 — </span>Финансовые продукты</p>
+        <h1 class="hero__title" id="hero-title">Карты, займы и счета&nbsp;— заявка онлайн за пять минут</h1>
         <p class="hero__lead">
-          Три предложения от ВТБ, ОТП Банка и ПСБ на одной странице: карты платёжной
-          системы «Мир» с бесплатным обслуживанием и доставкой курьером. Сравните
-          условия и оформите карту на официальном сайте банка.
+          Предложения банков и микрофинансовых организаций собраны на одной
+          странице и разложены по разделам: дебетовые и кредитные карты, займы,
+          расчётно-кассовое обслуживание. Сравните условия и оформите заявку
+          на официальном сайте партнёра.
         </p>
 
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#offers">Смотреть карты</a>
+          <a class="btn btn--primary" href="#offers">Смотреть предложения</a>
           <a class="btn btn--ghost" href="#compare">Сравнить условия</a>
         </div>
 
+        <!-- Числа проставляет js/catalog.js по каталогу: вручную их править
+             не нужно, при сохранении из панели они пересчитаются сами. -->
         <dl class="stats">
           <div class="stat">
-            <dt>Банка-партнёра</dt>
-            <dd>3</dd>
+            <dt>Партнёры</dt>
+            <dd id="stat-partners">3</dd>
           </div>
           <div class="stat">
-            <dt>Обслуживание</dt>
-            <dd>0 ₽</dd>
+            <dt>Предложений</dt>
+            <dd id="stat-offers">3</dd>
           </div>
           <div class="stat">
             <dt>Заявка онлайн</dt>
@@ -114,7 +126,7 @@
         </dl>
 
         <p class="hero__note">
-          Заявка заполняется на сайте банка. Этот сайт не запрашивает
+          Заявка заполняется на сайте партнёра. Этот сайт не запрашивает
           персональные данные и не берёт плату с посетителей.
         </p>
       </div>
@@ -164,15 +176,24 @@
     <div class="wrap">
       <div class="section__head">
         <div>
-          <p class="eyebrow">02 <span aria-hidden="true">—</span> Предложения</p>
+          <p class="eyebrow"><span aria-hidden="true">02 — </span>Предложения</p>
           <h2 class="section__title" id="offers-title">Дебетовые карты банков-партнёров</h2>
         </div>
         <p class="section__note">
-          Кнопка «Оформить» ведёт на официальный сайт банка и открывается
-          в новой вкладке. Сайт может получать вознаграждение от банка
-          за оформленную заявку — на условия карты это не влияет.
+          Кнопка перехода ведёт на официальный сайт партнёра и открывается
+          в новой вкладке. Сайт может получать вознаграждение за оформленную
+          заявку — на условия предложения это не влияет.
         </p>
       </div>
+
+      <!-- Сюда js/catalog.js вставляет ряд кнопок-разделов (.chip-row), если
+           заполненных разделов больше одного. В разметке их нет намеренно:
+           без JS фильтровать нечем, и кнопка осталась бы вечно нажатой. -->
+
+      <!-- Живая область: пустая и статическая. Диктор объявляет только те
+           области, которые были на странице ДО изменения, поэтому создавать
+           её скриптом нельзя. Прятать через display:none тоже нельзя. -->
+      <p class="offers-status" id="offers-status" role="status" aria-live="polite" aria-atomic="true"></p>
 
       <ul class="cards" role="list">
 
@@ -207,7 +228,7 @@
                  rel="nofollow sponsored noopener"
                  referrerpolicy="strict-origin-when-cross-origin">Оформить<span class="vh"> дебетовую карту ВТБ (откроется в новой вкладке)</span></a>
             </p>
-            <p class="card__fine">Актуальные условия — на сайте банка.</p>
+            <p class="card__fine">Актуальные условия — на сайте партнёра.</p>
           </article>
         </li>
 
@@ -242,7 +263,7 @@
                  rel="nofollow sponsored noopener"
                  referrerpolicy="strict-origin-when-cross-origin">Оформить<span class="vh"> дебетовую карту ОТП Банка (откроется в новой вкладке)</span></a>
             </p>
-            <p class="card__fine">Актуальные условия — на сайте банка.</p>
+            <p class="card__fine">Актуальные условия — на сайте партнёра.</p>
           </article>
         </li>
 
@@ -277,7 +298,7 @@
                  rel="nofollow sponsored noopener"
                  referrerpolicy="strict-origin-when-cross-origin">Оформить<span class="vh"> дебетовую карту ПСБ (откроется в новой вкладке)</span></a>
             </p>
-            <p class="card__fine">Актуальные условия — на сайте банка.</p>
+            <p class="card__fine">Актуальные условия — на сайте партнёра.</p>
           </article>
         </li>
 
@@ -290,20 +311,28 @@
     <div class="wrap">
       <div class="section__head">
         <div>
-          <p class="eyebrow">03 <span aria-hidden="true">—</span> Сравнение</p>
-          <h2 class="section__title" id="compare-title">Условия трёх карт рядом</h2>
+          <p class="eyebrow"><span aria-hidden="true">03 — </span>Сравнение</p>
+          <!-- Заголовок постоянный: он же имя области страницы, и менять его
+               на каждое нажатие кнопки раздела значило бы дёргать список
+               ориентиров. Переменная часть — в строке ниже. -->
+          <h2 class="section__title" id="compare-title">Сравнение условий</h2>
+          <p class="section__sub" id="compare-sub">Раздел «Дебетовые карты». Всего предложений: 3.</p>
         </div>
         <p class="section__note">
           Таблица прокручивается вбок на узком экране. Значения приведены
-          по данным банков-партнёров и могут меняться.
+          по данным партнёров и могут меняться.
         </p>
       </div>
 
+      <!-- role="region" здесь именуется подписью таблицы. Область без имени
+           в список ориентиров не попадает, а app.js делает её фокусируемой —
+           поэтому <caption id="cards-cap"> не пересоздаём, скрипт меняет
+           только его текст. -->
       <div class="table-scroll" role="region" aria-labelledby="cards-cap">
         <table class="table">
           <caption id="cards-cap" class="vh">
-            Сравнение дебетовых карт ВТБ, ОТП Банка и ПСБ: обслуживание, кэшбэк,
-            доставка, снятие наличных и способ оформления
+            Раздел «Дебетовые карты». Всего предложений: 3. Колонки: банк и карта,
+            обслуживание, кэшбэк, доставка, снятие наличных и оформление.
           </caption>
           <thead>
             <tr>
@@ -384,30 +413,30 @@
     <div class="wrap">
       <div class="section__head">
         <div>
-          <p class="eyebrow">04 <span aria-hidden="true">—</span> Порядок</p>
-          <h2 class="section__title" id="how-title">Как оформить карту</h2>
+          <p class="eyebrow"><span aria-hidden="true">04 — </span>Порядок</p>
+          <h2 class="section__title" id="how-title">Как оформить заявку</h2>
         </div>
         <p class="section__note">
-          Весь путь — онлайн. В отделение идти не нужно: карту привозит курьер
-          банка в согласованное время.
+          Весь путь — онлайн. Что понадобится из документов и сколько идёт
+          решение, партнёр показывает на своей странице.
         </p>
       </div>
 
       <ol class="steps">
         <li class="step">
           <span class="step__num" aria-hidden="true">01</span>
-          <h3 class="step__title">Сравните условия</h3>
-          <p>Посмотрите таблицу выше: обслуживание, кэшбэк и доставка у трёх банков отличаются.</p>
+          <h3 class="step__title">Выберите раздел</h3>
+          <p>Кнопки над карточками разделяют каталог: карты, займы, счета и другие продукты.</p>
         </li>
         <li class="step">
           <span class="step__num" aria-hidden="true">02</span>
-          <h3 class="step__title">Перейдите на сайт банка</h3>
-          <p>Кнопка «Оформить» открывает официальную страницу предложения в новой вкладке.</p>
+          <h3 class="step__title">Сравните условия</h3>
+          <p>В таблице раздела условия предложений стоят рядом — так видно, чем они отличаются.</p>
         </li>
         <li class="step">
           <span class="step__num" aria-hidden="true">03</span>
-          <h3 class="step__title">Заполните заявку</h3>
-          <p>Банк проверит данные и предложит время доставки. Решение обычно приходит в тот же день.</p>
+          <h3 class="step__title">Перейдите к партнёру</h3>
+          <p>Кнопка в карточке открывает официальную страницу предложения в новой вкладке. Заявка заполняется там же.</p>
         </li>
       </ol>
     </div>
@@ -418,7 +447,7 @@
     <div class="wrap wrap--narrow">
       <div class="section__head">
         <div>
-          <p class="eyebrow">05 <span aria-hidden="true">—</span> Вопросы</p>
+          <p class="eyebrow"><span aria-hidden="true">05 — </span>Вопросы</p>
           <h2 class="section__title" id="faq-title">Частые вопросы</h2>
         </div>
       </div>
@@ -431,19 +460,20 @@
           </button></h3>
           <div class="faq__panel" id="faq-panel-1" role="region" aria-labelledby="faq-btn-1" hidden>
             <p>Нет. <span lang="en">finance-time</span> — информационный сайт. Мы собираем предложения
-            банков в одном месте, а заявку вы оформляете на официальном сайте выбранного банка.
-            Сайт не выпускает карты, не открывает счета и не принимает документы.</p>
+            банков и микрофинансовых организаций в одном месте, а заявку вы оформляете на официальном
+            сайте выбранного партнёра. Сайт не выпускает карты, не выдаёт займы, не открывает счета
+            и не принимает документы.</p>
           </div>
         </div>
 
         <div class="faq__item">
           <h3><button class="faq__btn" type="button" id="faq-btn-2" aria-expanded="false" aria-controls="faq-panel-2">
-            Сколько стоит обслуживание карты?<span class="faq__sign" aria-hidden="true"></span>
+            Сколько стоит обслуживание?<span class="faq__sign" aria-hidden="true"></span>
           </button></h3>
           <div class="faq__panel" id="faq-panel-2" role="region" aria-labelledby="faq-btn-2" hidden>
-            <p>По всем трём предложениям обслуживание заявлено как бесплатное. Тарифы банк
-            может менять, поэтому итоговую сумму всегда видно на его сайте — на той странице,
-            куда ведёт кнопка «Оформить».</p>
+            <p>Стоимость указана в карточке каждого предложения и в таблице сравнения. Тарифы
+            партнёр может менять, поэтому итоговую сумму всегда видно на его сайте — на той
+            странице, куда ведёт кнопка из карточки.</p>
           </div>
         </div>
 
@@ -463,8 +493,9 @@
             Нужно ли ехать в отделение?<span class="faq__sign" aria-hidden="true"></span>
           </button></h3>
           <div class="faq__panel" id="faq-panel-4" role="region" aria-labelledby="faq-btn-4" hidden>
-            <p>Нет. Все три банка доставляют карту курьером по адресу, который вы укажете
-            в заявке. Паспорт понадобится только при получении.</p>
+            <p>Чаще всего нет: карту привозит курьер, а заём приходит на карту. Но порядок
+            устанавливает партнёр, и он написан на его странице — там же сказано, какие
+            документы понадобятся.</p>
           </div>
         </div>
 
@@ -473,8 +504,9 @@
             Как быстро придёт решение?<span class="faq__sign" aria-hidden="true"></span>
           </button></h3>
           <div class="faq__panel" id="faq-panel-5" role="region" aria-labelledby="faq-btn-5" hidden>
-            <p>Обычно банк отвечает в течение дня, а дату доставки согласовывает отдельно.
-            Точные сроки зависят от банка и вашего города — их называет банк при оформлении.</p>
+            <p>Сроки зависят от партнёра и продукта: по картам решение обычно приходит
+            в течение дня, по займам — заметно быстрее. Точное время называет партнёр
+            при оформлении.</p>
           </div>
         </div>
 
@@ -483,8 +515,8 @@
             Сайт берёт за что-нибудь деньги?<span class="faq__sign" aria-hidden="true"></span>
           </button></h3>
           <div class="faq__panel" id="faq-panel-6" role="region" aria-labelledby="faq-btn-6" hidden>
-            <p>С посетителей — нет. Сайт может получать вознаграждение от банка за оформленную
-            заявку. На условия карты и на её стоимость для вас это не влияет.</p>
+            <p>С посетителей — нет. Сайт может получать вознаграждение от партнёра за оформленную
+            заявку. На условия предложения и на его стоимость для вас это не влияет.</p>
           </div>
         </div>
 
@@ -508,13 +540,13 @@
         </span>
         <span class="brand__name" lang="en">finance-time</span>
       </p>
-      <p class="footer__tagline">Навигатор по дебетовым картам российских банков.</p>
+      <p class="footer__tagline">Навигатор по финансовым продуктам: карты, займы, счета.</p>
     </div>
 
     <nav class="footer__nav" aria-label="Разделы сайта">
       <h2 class="vh">Разделы сайта</h2>
       <ul role="list">
-        <li><a href="#offers">Карты</a></li>
+        <li><a href="#offers">Предложения</a></li>
         <li><a href="#compare">Сравнение</a></li>
         <li><a href="#how">Как оформить</a></li>
         <li><a href="#faq">Вопросы</a></li>
@@ -534,15 +566,15 @@
     <div class="footer__legal">
       <h2 class="vh">Правовая информация</h2>
       <p>
-        <span lang="en">finance-time</span> — информационный сайт. Он не является банком
-        или кредитной организацией, не оказывает финансовых услуг, не принимает заявки
-        и не запрашивает персональные данные. Все заявки оформляются на официальных
-        сайтах банков-партнёров, там же публикуются действующие тарифы и правила.
+        <span lang="en">finance-time</span> — информационный сайт. Он не является банком,
+        микрофинансовой или иной кредитной организацией, не оказывает финансовых услуг,
+        не принимает заявки и не запрашивает персональные данные. Все заявки оформляются
+        на официальных сайтах партнёров, там же публикуются действующие тарифы и правила.
       </p>
       <p>
         Информация на странице носит справочный характер и не является публичной офертой.
-        Условия обслуживания, кэшбэка и доставки устанавливает банк и может их менять.
-        Сайт может получать вознаграждение от банков-партнёров за оформленные заявки.
+        Условия обслуживания, ставки, лимиты и сроки устанавливает партнёр и может их менять.
+        Сайт может получать вознаграждение от партнёров за оформленные заявки.
       </p>
       <p class="footer__copy">© 2026 <span lang="en">finance-time</span></p>
     </div>
@@ -559,7 +591,7 @@
      подхватывается обычный data.js. -->
 <script src="data.php"></script>
 <script>if(typeof OFFERS==="undefined"){document.write('<script src="data.js"><\/script>');}</script>
-<script src="js/catalog.js?v=20260909194636" defer></script>
-<script src="js/app.js?v=20260909194636" defer></script>
+<script src="js/catalog.js?v=20260912165940" defer></script>
+<script src="js/app.js?v=20260912165940" defer></script>
 </body>
 </html>

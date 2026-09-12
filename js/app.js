@@ -207,6 +207,17 @@
     syncScroller();
     window.addEventListener('resize', syncScroller);
     window.addEventListener('load', syncScroller);
+
+    /* Смена раздела меняет число колонок, но не вызывает ни resize, ни load:
+       без этого таблица пошире оставалась бы без tabindex, и до ссылок
+       в последней колонке нельзя было бы добраться с клавиатуры.
+       Второй заход через кадр — логотипы в строках грузятся лениво
+       и меняют ширину уже после первого замера. */
+    document.addEventListener('ft:catalog-rendered', function () {
+      scroller.scrollLeft = 0;
+      syncScroller();
+      window.requestAnimationFrame(syncScroller);
+    });
   }
 
   /* ------------------------------------------------------------------------
