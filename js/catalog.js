@@ -52,6 +52,9 @@
       .replace(/"/g, '&quot;');
   }
   function text(v) { return String(v == null ? '' : v).trim(); }
+  /* Значение условия. Старая панель сохраняла «от 3 000 до 100 000 ₽;»
+     вместе с точкой с запятой из списка клиента — на сайте она лишняя. */
+  function val(v) { return text(v).replace(/[\s;,]+$/, ''); }
 
   /* Меняем ТОЛЬКО текст существующего узла. Перерисовать заголовок целиком
      нельзя: на его id ссылаются aria-labelledby разделов, и вместе с узлом
@@ -191,9 +194,9 @@
   var board = document.querySelector('.board__list');
   if (board) {
     board.innerHTML = live.slice(0, BOARD_MAX).map(function (o) {
-      var cells = (o.specs || []).slice(0, 2).map(function (p) {
+      var cells = (o.specs || []).filter(function (p) { return val(p[1]); }).slice(0, 2).map(function (p) {
         return '<span class="board__cell"><span class="board__label">' + esc(p[0]) +
-               '</span><span class="board__value">' + esc(p[1]) + '</span></span>';
+               '</span><span class="board__value">' + esc(val(p[1])) + '</span></span>';
       }).join('');
       return '<li class="board__row">' + plate(o, 'plate--sm') +
         '<span class="board__bank">' + esc(text(o.partner) || text(o.title)) +
@@ -219,61 +222,76 @@
      #offers-status, наоборот, лежит в разметке — объявляется только то,
      что было на странице до изменения. */
 
-  var chipBox = null;
-
-  function buildChooser() {
-    if (groups.length < 2) return;
-    var head = document.querySelector('#offers .section__head');
-    var status = document.getElementById('offers-status');
-    if (!head || !status || !status.parentNode) return;
-
+  /* Рядов кнопок два, и они синхронны: над карточками и над таблицей
+     сравнения. Клиент просил сравнивать не только дебетовые карты, а таблица
+     и так переключалась — но только кнопками из блока «Предложения», и из
+     раздела «Сравнение» до них было не добраться. Нажатие в любом ряду меняет
+     раздел на всей странице: карточки, заголовок и таблицу. */
+  function makeRow(labelId, labelText) {
     var wrap = document.createElement('div');
     wrap.className = 'chip-row';
-    wrap.innerHTML = '<p class="chip-row__label" id="chip-row-label">Раздел каталога</p>' +
-      '<div class="chip-row__group" role="group" aria-labelledby="chip-row-label">' +
+    wrap.innerHTML = '<p class="chip-row__label" id="' + labelId + '">' + esc(labelText) + '</p>' +
+      '<div class="chip-row__group" role="group" aria-labelledby="' + labelId + '">' +
       groups.map(function (g, i) {
         return '<button class="chip" type="button" data-i="' + i + '" aria-pressed="' +
-          (i === 0 ? 'true' : 'false') + '">' +
+          (i === activeIndex ? 'true' : 'false') + '">' +
           '<span class="chip__mark" aria-hidden="true"></span>' +
           '<span class="chip__name">' + esc(text(g.cat.label) || 'Раздел') + '</span> ' +
           '<span class="chip__n">' + g.items.length + '</span></button>';
       }).join('') + '</div>';
+    wrap.addEventListener('click', onChip);
+    return wrap;
+  }
 
-    status.parentNode.insertBefore(wrap, status);
-    chipBox = wrap;
+  function buildChooser() {
+    if (groups.length < 2) return;
 
-    wrap.addEventListener('click', function (e) {
-      var btn = e.target.closest('.chip');
-      if (!btn) return;
-      /* Фокус ставим сами и от кнопки из события: в Safari и Firefox
-         на macOS щелчок по кнопке не всегда делает её activeElement,
-         и следующий Tab уехал бы в начало страницы. preventScroll
-         обязателен — иначе страница дёрнется. */
-      btn.focus({ preventScroll: true });
-      var i = parseInt(btn.getAttribute('data-i'), 10);
-      if (isNaN(i) || i === activeIndex) return;     // повторное нажатие молчит
-      activeIndex = i;
-      Array.prototype.forEach.call(wrap.querySelectorAll('.chip'), function (b) {
-        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
-      });
+    var status = document.getElementById('offers-status');
+    if (status && status.parentNode) {
+      status.parentNode.insertBefore(makeRow('chip-row-label', 'Раздел каталога'), status);
+    }
 
-      /* Заголовок над кнопками у разных разделов разной длины: на узком
-         экране он занимает то две строки, то три, и нажатая кнопка уезжает
-         вверх — вплоть до того, что прячется под липкой шапкой. Ловим сдвиг
-         и возвращаем кнопку на то же место. scroll-behavior на время правки
-         переключаем на auto: иначе плавная прокрутка из стилей превращает
-         поправку в заметный рывок. */
-      var top = btn.getBoundingClientRect().top;
-      show(i, true);
-      var delta = btn.getBoundingClientRect().top - top;
-      if (delta) {
-        var root = document.documentElement;
-        var prev = root.style.scrollBehavior;
-        root.style.scrollBehavior = 'auto';
-        window.scrollBy(0, delta);
-        root.style.scrollBehavior = prev;
-      }
+    /* Над таблицей, под заголовком «Сравнение условий». */
+    var scroller = document.querySelector('#compare .table-scroll');
+    if (scroller && scroller.parentNode) {
+      scroller.parentNode.insertBefore(makeRow('chip-row-label-compare', 'Что сравнить'), scroller);
+    }
+  }
+
+  function onChip(e) {
+    var btn = e.target.closest('.chip');
+    if (!btn) return;
+    /* Фокус ставим сами и от кнопки из события: в Safari и Firefox
+       на macOS щелчок по кнопке не всегда делает её activeElement,
+       и следующий Tab уехал бы в начало страницы. preventScroll
+       обязателен — иначе страница дёрнется. */
+    btn.focus({ preventScroll: true });
+    var i = parseInt(btn.getAttribute('data-i'), 10);
+    if (isNaN(i) || i === activeIndex) return;     // повторное нажатие молчит
+    activeIndex = i;
+    /* Нажатое состояние — в обоих рядах сразу. */
+    Array.prototype.forEach.call(document.querySelectorAll('.chip-row .chip'), function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-i') === String(i) ? 'true' : 'false');
     });
+
+    /* Высота блока над нажатой кнопкой меняется: заголовок раздела
+       бывает в две строки и в три, а у кнопок над таблицей сверху
+       целиком перерисовываются карточки. Без поправки нажатая кнопка
+       уезжала бы — вплоть до того, что пряталась под липкой шапкой.
+       Ловим сдвиг и возвращаем кнопку на то же место. scroll-behavior
+       на время правки переключаем на auto: иначе плавная прокрутка
+       из стилей превращает поправку в заметный рывок. */
+    var top = btn.getBoundingClientRect().top;
+    /* Над таблицей первым говорим про таблицу — она рядом с кнопкой. */
+    show(i, btn.closest('#compare') ? 'table' : 'cards');
+    var delta = btn.getBoundingClientRect().top - top;
+    if (delta) {
+      var root = document.documentElement;
+      var prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = 'auto';
+      window.scrollBy(0, delta);
+      root.style.scrollBehavior = prev;
+    }
   }
 
   /* Живую область сначала чистим, текст ставим следующей задачей: иначе
@@ -302,7 +320,7 @@
       var num = (i + 1) < 10 ? '0' + (i + 1) : String(i + 1);
 
       var specs = (o.specs || []).map(function (p) {
-        var value = text(p[1]);
+        var value = val(p[1]);
         return '<li><span class="ic" aria-hidden="true"></span>' +
                esc(p[0]) + (value ? ' — ' + esc(value) : '') + '</li>';
       }).join('');
@@ -341,7 +359,9 @@
     items.forEach(function (o) {
       (o.specs || []).forEach(function (p) {
         var k = text(p[0]);
-        if (!k) return;
+        /* Строка без значения («Без залога») — пометка для карточки,
+           а не колонка: в таблице у всех стояло бы «Не указано». */
+        if (!k || !val(p[1])) return;
         if (hits[k] == null) { hits[k] = 0; order.push(k); }
         hits[k]++;
       });
@@ -377,7 +397,7 @@
 
     body.innerHTML = items.map(function (o) {
       var map = {};
-      (o.specs || []).forEach(function (p) { map[text(p[0])] = text(p[1]); });
+      (o.specs || []).forEach(function (p) { map[text(p[0])] = val(p[1]); });
 
       var cells = cols.map(function (k) {
         var v = map[k] || empty;
@@ -421,7 +441,11 @@
     /* Имя раздела в сообщение не кладём: кнопка и так прочитала своё имя
        и состояние. Живая область говорит то, чего кнопка сказать не может, —
        что стало с остальной страницей. */
-    if (speak) say('Показано ' + offersWord(g.items.length) + '. Таблица сравнения обновлена.');
+    if (speak === 'table') {
+      say('Таблица сравнения обновлена. Показано ' + offersWord(g.items.length) + '.');
+    } else if (speak) {
+      say('Показано ' + offersWord(g.items.length) + '. Таблица сравнения обновлена.');
+    }
   }
 
   buildChooser();
